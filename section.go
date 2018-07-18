@@ -2,12 +2,13 @@ package main
 
 import (
 	"math"
+	"strings"
 )
 
 type section struct {
-	d     float64
-	thick float64
-	f     float64
+	d      float64
+	thick  float64
+	degree string
 }
 
 func (s *section) wn() float64 {
@@ -24,4 +25,15 @@ func (s *section) ix() float64 {
 
 func (s *section) r() float64 {
 	return 0.354 * s.d
+}
+
+func (s *section) fy() float64 {
+	switch strings.ToUpper(s.degree) {
+	case "Q235":
+		return 215
+	case "Q345":
+		return 310
+	default:
+		return 0
+	}
 }
