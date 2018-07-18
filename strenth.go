@@ -11,13 +11,13 @@ func strenth(f *force, sec *section) (isok bool) {
 	val := func(sec *section) int {
 		is := sec.d / sec.thick
 		switch {
-		case is < 50*math.Pow(epstion, 2):
+		case is <= 50*math.Pow(epstion, 2):
 			return 0
-		case is < 70*math.Pow(epstion, 2):
+		case is <= 70*math.Pow(epstion, 2):
 			return 1
-		case is < 90*math.Pow(epstion, 2):
+		case is <= 90*math.Pow(epstion, 2):
 			return 2
-		case is < 100*math.Pow(epstion, 2):
+		case is <= 100*math.Pow(epstion, 2):
 			return 3
 		default:
 			return -1
