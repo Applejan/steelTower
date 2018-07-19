@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"math"
 )
@@ -76,4 +77,28 @@ func strenth4(s *section, f *force) (isok bool) {
 		return true
 	}
 	return
+}
+
+// Strength implments the check of strength
+func Strength(s *section, f *force) {
+	if strenth4(s, f) {
+		fmt.Println("GB50017-2017强度验算,OK!")
+	} else {
+		fmt.Println("GB50017-2017强度验算,False!")
+	}
+	if strenth2(s, f) {
+		fmt.Println("DLT5130-2001弯曲强度计算,OK!")
+	} else {
+		fmt.Println("DLT5130-2001弯曲强度计算,False!")
+	}
+	if strenth3(s, f) {
+		fmt.Println("DLT5130-2001剪切强度计算,OK!")
+	} else {
+		fmt.Println("DLT5130-2001剪切强度计算,False!")
+	}
+	if strenth4(s, f) {
+		fmt.Println("DLT5130-2001剪切强度计算,OK!")
+	} else {
+		fmt.Println("DLT5130-2001剪切强度计算,False!")
+	}
 }

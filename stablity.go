@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -41,4 +42,13 @@ func stablity(s *section, f *force) (isok bool) {
 		return true
 	}
 	return
+}
+
+//Stablity implents the check of stablity
+func Stablity(s *section, f *force) {
+	if stablity(s, f) {
+		fmt.Println("DLT5130-2001局部稳定验算,OK!")
+	} else {
+		fmt.Println("DLT5130-2001局部稳定验算,False!")
+	}
 }
