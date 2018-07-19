@@ -11,6 +11,7 @@ type body struct {
 }
 
 type force struct {
+	id string
 	m float64
 	v float64
 	n float64
