@@ -14,8 +14,8 @@ func main() {
 	}
 	for i := 0; i < height; i++ {
 		bodys[i].id = i
-		bodys[i].p1 = points[i].id
-		bodys[i].p2 = points[i+1].id
+		bodys[i].p1 = points[i]
+		bodys[i].p2 = points[i+1]
 	}
 
 	//TOdo
