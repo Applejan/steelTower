@@ -5,19 +5,28 @@ import (
 	"math"
 )
 
-func strenth(f *force, sec *section) (isok bool) {
+type sections interface {
+	wn() float64
+	area() float64
+	ix() float64
+	r() float64
+	fy() float64
+}
+
+//GB50017-2017强度验算
+func strenth1(f *force, sec *section) (isok bool) {
 
 	epstion := math.Sqrt(235 / sec.fy())
 	val := func(sec *section) int {
 		is := sec.d / sec.thick
 		switch {
-		case is < 50*math.Pow(epstion, 2):
+		case is <= 50*math.Pow(epstion, 2):
 			return 0
-		case is < 70*math.Pow(epstion, 2):
+		case is <= 70*math.Pow(epstion, 2):
 			return 1
-		case is < 90*math.Pow(epstion, 2):
+		case is <= 90*math.Pow(epstion, 2):
 			return 2
-		case is < 100*math.Pow(epstion, 2):
+		case is <= 100*math.Pow(epstion, 2):
 			return 3
 		default:
 			return -1
@@ -41,4 +50,30 @@ func strenth(f *force, sec *section) (isok bool) {
 		return false
 	}
 	return true
+}
+
+//DLT5130-2001弯曲强度计算
+func strenth2(s *section, f *force) (isok bool) {
+	if f.m*s.c()/s.ix() <= fb(s) {
+		return true
+	}
+	return
+}
+
+//DLT5130-2001剪切强度计算
+func strenth3(s *section, f *force) (isok bool) {
+	if f.v*qit(s) <= 0.58*s.fy() {
+		return true
+	}
+	return
+}
+
+//DLT5130-2001复合受力强度计算
+func strenth4(s *section, f *force) (isok bool) {
+	tmp1 := math.Pow(f.n/s.area()+f.m*s.c()/s.ix(), 2)
+	tmp2 := 3 * math.Pow(f.v*qit(s), 2)
+	if tmp1*tmp1+tmp2*tmp2 <= math.Pow(fb(s), 2) {
+		return true
+	}
+	return
 }

@@ -1,21 +1,24 @@
 //基于xls计算避雷针的强度和稳定
 package main
 
-type body struct {
-	num int
-	p1  int
-	p2  int
-	section
-	windload float64
-	force    float64
-}
-
-type force struct {
-	m float64
-	v float64
-	n float64
-}
-
 func main() {
+	//Init points and bodys
+	var height int
+	var bodys []body
+	var points []po
+	for i := 0; i < height+1; i++ {
+		points[i].id = i
+		points[i].x = 0
+		points[i].y = 0
+		points[i].z = i
+	}
+	for i := 0; i < height; i++ {
+		bodys[i].id = i
+		bodys[i].p1 = points[i].id
+		bodys[i].p2 = points[i+1].id
+	}
+
+	//TOdo
+
 	return
 }

@@ -37,3 +37,6 @@ func (s *section) fy() float64 {
 		return 0
 	}
 }
+func (s *section) c() float64 {
+	return 0.5 * (s.d + s.thick)
+}
