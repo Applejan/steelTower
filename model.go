@@ -9,7 +9,8 @@ type body struct {
 	p1, p2 po
 	section
 	winddata
-	force float64
+	force  float64
+	height int
 }
 type winddata struct {
 	w0  float64
@@ -63,9 +64,9 @@ func (s *body) uz() (uz float64) {
 	return
 }
 
-func (s *body) xi1(h int, w *winddata) (uz float64) {
-	t := 0.07 * float64(h)
-	tt := w.w0 * t * t
+func (s *body) xi() (uz float64) {
+	t := 0.07 * float64(s.height)
+	tt := s.winddata.w0 * t * t
 	num := [][]float64{
 		{0.01, 1.47},
 		{0.02, 1.57},
@@ -91,5 +92,41 @@ func (s *body) xi1(h int, w *winddata) (uz float64) {
 			return num[i+1][1]
 		}
 	}
+	return
+}
+
+func (s *body) epsilon1() (eps float64) {
+	val := [][]float64{
+		{10, 0.57, 0.72, 1.03, 1.66},
+		{20, 0.51, 0.63, 0.87, 1.35},
+		{40, 0.45, 0.55, 0.73, 1.06},
+		{80, 0.39, 0.46, 0.58, 0.80},
+	}
+	for _, v := range val {
+		if int(v[0]) > s.height {
+			return v[s.winddata.rou.id()+1]
+		}
+	}
+	return
+}
+
+//epsilon2 is not work
+func (s *body) epsilon2() (eps float64) {
+	val := [][]float64{
+		{10, 0.57, 0.72, 1.03, 1.66},
+		{20, 0.51, 0.63, 0.87, 1.35},
+		{40, 0.45, 0.55, 0.73, 1.06},
+		{80, 0.39, 0.46, 0.58, 0.80},
+	}
+	for _, v := range val {
+		if int(v[0]) > s.height {
+			return v[s.winddata.rou.id()+1]
+		}
+	}
+	return
+}
+
+func (s *body) wind() float64 {
+	// return 0.9*s.uz()*(1+s.xi(height)*s.epsilon1)
 	return
 }
