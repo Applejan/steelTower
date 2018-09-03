@@ -1,9 +1,15 @@
 package main
 
+import (
+	"math"
+)
+
+//Point data
 type po struct {
 	id, x, y, z int
 }
 
+//body stand for the Tower frame
 type body struct {
 	id     int
 	p1, p2 po
@@ -12,6 +18,7 @@ type body struct {
 	force  float64
 	height int
 }
+
 type winddata struct {
 	w0  float64
 	rou rough
@@ -64,57 +71,17 @@ func (s *body) uz() (uz float64) {
 	return
 }
 
-func (s *body) xi() (uz float64) {
-	t := 0.07 * float64(s.height)
-	tt := s.winddata.w0 * t * t
-	num := [][]float64{
-		{0.01, 1.47}, {0.02, 1.57}, {0.04, 1.69},
-		{0.06, 1.77}, {0.08, 1.83}, {0.10, 1.88},
-		{0.20, 2.04}, {0.40, 2.24}, {0.60, 2.36},
-		{0.80, 2.46}, {1.00, 2.53}, {2.00, 2.80},
-		{4.00, 3.09}, {6.00, 3.28}, {8.00, 3.42},
-		{10.00, 3.54}, {20.00, 3.91}, {30.00, 4.14},
-	}
-	for i, v := range num {
-		if v[0] > tt {
-			return num[i+1][1]
-		}
-	}
-	return
-}
-
-func (s *body) epsilon1() (eps float64) {
-	val := [][]float64{
-		{10, 0.57, 0.72, 1.03, 1.66},
-		{20, 0.51, 0.63, 0.87, 1.35},
-		{40, 0.45, 0.55, 0.73, 1.06},
-		{80, 0.39, 0.46, 0.58, 0.80},
-	}
-	for _, v := range val {
-		if int(v[0]) > s.height {
-			return v[s.winddata.rou.id()+1]
-		}
-	}
-	return
-}
-
-//epsilon2 is not work
-func (s *body) epsilon2() (eps float64) {
-	val := [][]float64{
-		{10, 0.57, 0.72, 1.03, 1.66},
-		{20, 0.51, 0.63, 0.87, 1.35},
-		{40, 0.45, 0.55, 0.73, 1.06},
-		{80, 0.39, 0.46, 0.58, 0.80},
-	}
-	for _, v := range val {
-		if int(v[0]) > s.height {
-			return v[s.winddata.rou.id()+1]
-		}
-	}
-	return
-}
 
 func (s *body) wind() float64 {
-	beta := 1 + s.xi()*s.epsilon1()*s.epsilon2()
-	return 0.9 * s.uz() * beta * s.winddata.w0
+	us := func() (us float64) {
+		tmp := s.uz() * s.winddata.w0 * math.Pow(s.section.d, 2)
+		if tmp <= 0.002 {
+			return 1.2
+		} else if tmp >= 0.15 {
+			return 0.6
+		}
+		return 1.2 + (tmp-0.002)*0.6/0.013
+	}()
+	beta := 2.0 //风振系数
+	return 0.9 * s.uz() * beta * us * s.winddata.w0
 }
