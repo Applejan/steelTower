@@ -1,12 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"math"
 )
 
 //Point data
 type po struct {
 	id, x, y, z int
+}
+
+func (s *po) String() string {
+	return fmt.Sprintf("Point%v is ( %v,%v,%v)", s.id, s.x, s.y, s.z)
 }
 
 //body stand for the Tower frame
@@ -70,7 +75,6 @@ func (s *body) uz() (uz float64) {
 	}
 	return
 }
-
 
 func (s *body) wind() float64 {
 	us := func() (us float64) {
