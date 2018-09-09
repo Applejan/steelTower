@@ -11,9 +11,8 @@ import (
 func main() {
 	var height int
 	var grade string
-	var w0 float64
-	bodys := make([]body, 60)
-	points := make([]po, 60)
+	bodys := make([]body, 50)
+	points := make([]po, 50)
 	//Init points and bodys
 	xls, err := excelize.OpenFile("Init_file.xlsx")
 	if err != nil {
@@ -29,7 +28,10 @@ func main() {
 			grade = v[1]
 			fallthrough
 		case "Wind_w0":
-			w0, _ = strconv.ParseFloat(v[1], 64)
+			windInfo.w0, _ = strconv.ParseFloat(v[1], 64)
+			fallthrough
+		case "Ground_rou":
+			windInfo.rou = rough(v[1])
 			fallthrough
 		case "Id":
 			k++
@@ -50,11 +52,10 @@ func main() {
 		bodys[i].p1 = points[i]
 		bodys[i].p2 = points[i+1]
 		bodys[i].height = height
-		bodys[i].winddata.w0 = w0
 		bodys[i].section.degree = grade
 	}
-	for _, v := range points {
-		fmt.Println(v)
-	}
+	points = points[:height+1]
+	bodys = bodys[:height]
+	fmt.Println(points)
 
 }
