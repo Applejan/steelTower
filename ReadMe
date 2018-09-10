@@ -2,3 +2,5 @@ ToTal：完成单管避雷针的模型数据生成、计算完成后，接力到
 Current：完成杆段强度及稳定性验算函数（2018-07-19）
 Next：模型数据生成
 sap调用：C:\SAP2000\SAP2000.EXE  C:\DATA\MYMODEL.SDB  /R B2 
+2018.09.10
+采用xlsl来进行模型的输入
