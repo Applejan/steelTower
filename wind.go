@@ -39,7 +39,7 @@ func (s *body) uz() (uz float64) {
 	}
 	i := windInfo.rou.id()
 	for k, v := range uzs {
-		if int(v[k]) < s.p1.z {
+		if int(v[k]) < s.p1.z && k < len(uzs)-1 {
 			tmp1 := uzs[k][i+1]
 			tmp2 := uzs[k+1][i+1]
 			return tmp1 + (tmp2-tmp1)/(uzs[k+1][0]-uzs[k][i+1])*(float64(s.p1.z)-uzs[k][i+1])

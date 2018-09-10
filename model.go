@@ -20,7 +20,6 @@ type body struct {
 	section
 	windForce float64
 	force     float64
-	height    int
 }
 
 type force struct {

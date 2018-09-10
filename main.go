@@ -51,11 +51,11 @@ func main() {
 		bodys[i].id = i
 		bodys[i].p1 = points[i]
 		bodys[i].p2 = points[i+1]
-		bodys[i].height = height
 		bodys[i].section.degree = grade
 	}
 	points = points[:height+1]
 	bodys = bodys[:height]
-	fmt.Println(points)
-
+	for _, s := range bodys {
+		fmt.Println(s.id, s.wind())
+	}
 }
