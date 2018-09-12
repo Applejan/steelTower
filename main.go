@@ -57,9 +57,19 @@ func main() {
 	points = points[:height+1]
 	bodys = bodys[:height]
 
-	for _, v := range bodys {
-
-		fmt.Println(v)
+	//Write Joint
+	// xls.SetActiveSheet(xls.GetSheetIndex("Joint Coordinates"))
+	for i, v := range points {
+		index := i + 4
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("A", index), v.id)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("H", index), v.x)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("E", index), v.y)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("I", index), v.y)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("D", index), v.x)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("F", index), v.z)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("J", index), v.z)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("B", index), "GLOBAL")
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("C", index), "Cartesian")
 	}
-
+	xls.Save()
 }
