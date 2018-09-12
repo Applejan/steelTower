@@ -50,7 +50,7 @@ func (s *body) uz() (uz float64) {
 
 		}
 	}
-	return m + n
+	return
 }
 
 func (s *body) wind() float64 {
