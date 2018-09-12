@@ -47,6 +47,7 @@ func (s *body) uz() (uz float64) {
 			tmp1 := uzs[index-1][i]
 			tmp2 := uzs[index][i]
 			return tmp1 + (tmp2-tmp1)/(uzs[index][0]-uzs[index-1][0])*(float64(z)-uzs[index-1][0])
+
 		}
 	}
 	return
