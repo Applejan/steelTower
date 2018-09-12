@@ -37,7 +37,7 @@ func main() {
 			fallthrough
 		case "Id":
 			k++
-			for j, _ := strconv.Atoi(rows[k][0]); j < height+1; j++ {
+			for j := 0; j < height; j++ {
 				bodys[j].section.d, _ = strconv.ParseFloat(rows[k][1], 64)
 				bodys[j].section.thick, _ = strconv.ParseFloat(rows[k][2], 64)
 			}
@@ -59,6 +59,7 @@ func main() {
 
 	//Write Joint
 	// xls.SetActiveSheet(xls.GetSheetIndex("Joint Coordinates"))
+	log.Println("Now write Joint infomation")
 	for i, v := range points {
 		index := i + 4
 		xls.SetCellValue("Joint Coordinates", fmt.Sprint("A", index), v.id)
@@ -71,5 +72,41 @@ func main() {
 		xls.SetCellValue("Joint Coordinates", fmt.Sprint("B", index), "GLOBAL")
 		xls.SetCellValue("Joint Coordinates", fmt.Sprint("C", index), "Cartesian")
 	}
+
+	log.Println("Now write Frame infomation")
+	for i, v := range bodys {
+		index := i + 4
+		xls.SetCellValue("Connectivity - Frame", fmt.Sprint("A", index), v.id)
+		xls.SetCellValue("Connectivity - Frame", fmt.Sprint("B", index), v.p1.id)
+		xls.SetCellValue("Connectivity - Frame", fmt.Sprint("C", index), v.p2.id)
+	}
+	for i, v := range bodys {
+		index := i + 4
+		secName := fmt.Sprintf("Pipe%.0f*%.0f", v.section.d, v.section.thick)
+		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("A", index), secName)
+		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("B", index), v.grade)
+		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("C", index), "Pipe")
+		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("D", index), int(v.d))
+		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("E", index), int(v.thick))
+	}
+	for i, v := range bodys {
+		index := i + 4
+		secName := fmt.Sprintf("Pipe%.0f*%.0f", v.section.d, v.section.thick)
+		xls.SetCellValue("Frame Section Assignments", fmt.Sprint("A", index), v.id)
+		xls.SetCellValue("Frame Section Assignments", fmt.Sprint("B", index), "Pipe")
+		xls.SetCellValue("Frame Section Assignments", fmt.Sprint("D", index), secName)
+	}
+	for i, v := range bodys {
+		index := i + 4
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("A", index), v.id)
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("B", index), "WIND")
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("D", index), "FORCE")
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("E", index), "X")
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("I", index), 0)
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("J", index), 1)
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("K", index), fmt.Sprintf("%.2f", v.wind()))
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("L", index), fmt.Sprintf("%.2f", v.wind()))
+	}
+
 	xls.Save()
 }
