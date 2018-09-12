@@ -6,9 +6,9 @@ import (
 )
 
 type section struct {
-	d      float64
-	thick  float64
-	degree string
+	d     float64
+	thick float64
+	grade string
 }
 
 func (s *section) wn() float64 {
@@ -28,7 +28,7 @@ func (s *section) r() float64 {
 }
 
 func (s *section) fy() float64 {
-	switch strings.ToUpper(s.degree) {
+	switch strings.ToUpper(s.grade) {
 	case "Q235":
 		return 215
 	case "Q345":
