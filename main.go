@@ -3,9 +3,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/360EntSecGroup-Skylar/excelize"
 	"log"
 	"strconv"
+
+	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 func main() {
@@ -13,12 +14,13 @@ func main() {
 	var grade string
 	bodys := make([]body, 50)
 	points := make([]po, 50)
+
 	//Init points and bodys
-	xls, err := excelize.OpenFile("Init_file.xlsx")
+	xls, err := excelize.OpenFile("Model.xlsx")
 	if err != nil {
-		log.Println(err)
+		log.Fatalln(err)
 	}
-	rows := xls.GetRows("Sheet1")
+	rows := xls.GetRows("Input")
 	for k, v := range rows {
 		switch v[0] {
 		case "Total_High":
@@ -35,27 +37,39 @@ func main() {
 			fallthrough
 		case "Id":
 			k++
-			for j := k; j < height+1; j++ {
-				bodys[j].section.d, _ = strconv.ParseFloat(v[1], 64)
-				bodys[j].section.thick, _ = strconv.ParseFloat(v[2], 64)
+			for j, _ := strconv.Atoi(rows[k][0]); j < height+1; j++ {
+				bodys[j].section.d, _ = strconv.ParseFloat(rows[k][1], 64)
+				bodys[j].section.thick, _ = strconv.ParseFloat(rows[k][2], 64)
 			}
 		}
 	}
 	for i := 0; i < height+1; i++ {
-		points[i].id = i
-		points[i].x = 0
-		points[i].y = 0
+		points[i].id = i + 1
 		points[i].z = i
 	}
 	for i := 0; i < height; i++ {
-		bodys[i].id = i
+		bodys[i].id = i + 1
 		bodys[i].p1 = points[i]
 		bodys[i].p2 = points[i+1]
-		bodys[i].section.degree = grade
+		bodys[i].grade = grade
+		bodys[i].windForce = bodys[i].wind()
 	}
 	points = points[:height+1]
 	bodys = bodys[:height]
-	for _, s := range bodys {
-		fmt.Println(s.id, s.wind())
+
+	//Write Joint
+	// xls.SetActiveSheet(xls.GetSheetIndex("Joint Coordinates"))
+	for i, v := range points {
+		index := i + 4
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("A", index), v.id)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("H", index), v.x)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("E", index), v.y)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("I", index), v.y)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("D", index), v.x)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("F", index), v.z)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("J", index), v.z)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("B", index), "GLOBAL")
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("C", index), "Cartesian")
 	}
+	xls.Save()
 }

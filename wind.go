@@ -28,6 +28,7 @@ func (r rough) id() (id int) {
 }
 
 func (s *body) uz() (uz float64) {
+	z := s.p2.z
 	uzs := [][]float64{
 		{5, 1.17, 1.00, 0.74, 0.62},
 		{10, 1.38, 1.00, 0.74, 0.62},
@@ -37,11 +38,16 @@ func (s *body) uz() (uz float64) {
 		{40, 1.92, 1.56, 1.13, 0.73},
 		{50, 2.03, 1.67, 1.25, 0.84},
 	}
-	i := windInfo.rou.id()
-	var m, n float64
-	for k, v := range uzs {
-		if int(v[k]) == s.p1.z {
-			m = uzs[k][i+1]
+	i := windInfo.rou.id() + 1
+	if z < int(uzs[0][0]) {
+		return uzs[0][i]
+	}
+	for index, v := range uzs {
+		if z < int(v[0]) {
+			tmp1 := uzs[index-1][i]
+			tmp2 := uzs[index][i]
+			return tmp1 + (tmp2-tmp1)/(uzs[index][0]-uzs[index-1][0])*(float64(z)-uzs[index-1][0])
+
 		}
 	}
 	return m + n
