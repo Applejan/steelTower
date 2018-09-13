@@ -40,6 +40,7 @@ func main() {
 			for j := 0; j < height; j++ {
 				bodys[j].section.d, _ = strconv.ParseFloat(rows[k][1], 64)
 				bodys[j].section.thick, _ = strconv.ParseFloat(rows[k][2], 64)
+				k++
 			}
 		}
 	}
@@ -79,34 +80,38 @@ func main() {
 		xls.SetCellValue("Connectivity - Frame", fmt.Sprint("A", index), v.id)
 		xls.SetCellValue("Connectivity - Frame", fmt.Sprint("B", index), v.p1.id)
 		xls.SetCellValue("Connectivity - Frame", fmt.Sprint("C", index), v.p2.id)
-	}
-	for i, v := range bodys {
-		index := i + 4
+
 		secName := fmt.Sprintf("Pipe%.0f*%.0f", v.section.d, v.section.thick)
 		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("A", index), secName)
 		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("B", index), v.grade)
 		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("C", index), "Pipe")
-		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("D", index), int(v.d))
-		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("E", index), int(v.thick))
-	}
-	for i, v := range bodys {
-		index := i + 4
-		secName := fmt.Sprintf("Pipe%.0f*%.0f", v.section.d, v.section.thick)
+		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("D", index), floatTofloat(v.d/1000.0, 3))
+		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("E", index), floatTofloat(v.thick/1000.0, 3))
+
 		xls.SetCellValue("Frame Section Assignments", fmt.Sprint("A", index), v.id)
 		xls.SetCellValue("Frame Section Assignments", fmt.Sprint("B", index), "Pipe")
 		xls.SetCellValue("Frame Section Assignments", fmt.Sprint("D", index), secName)
-	}
-	for i, v := range bodys {
-		index := i + 4
+
 		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("A", index), v.id)
 		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("B", index), "WIND")
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("C", index), "GLOBAL")
 		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("D", index), "FORCE")
 		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("E", index), "X")
-		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("I", index), 0)
-		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("J", index), 1)
-		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("K", index), fmt.Sprintf("%.2f", v.wind()))
-		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("L", index), fmt.Sprintf("%.2f", v.wind()))
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("F", index), "RelDist")
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("G", index), 0)
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("H", index), 1)
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("K", index), floatTofloat(v.wind()*v.d/1000.0, 3))
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("L", index), floatTofloat(v.wind()*v.d/1000.0, 3))
 	}
 
 	xls.Save()
+}
+
+func floatTofloat(x float64, bit int) (val float64) {
+	if bit == 2 {
+		val, _ = strconv.ParseFloat(fmt.Sprintf("%0.2f", x), 64)
+	} else if bit == 3 {
+		val, _ = strconv.ParseFloat(fmt.Sprintf("%0.3f", x), 64)
+	}
+	return
 }
