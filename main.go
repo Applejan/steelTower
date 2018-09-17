@@ -53,10 +53,25 @@ func main() {
 		bodys[i].p1 = points[i]
 		bodys[i].p2 = points[i+1]
 		bodys[i].grade = grade
-		bodys[i].windForce = bodys[i].wind()
+
 	}
 	points = points[:height+1]
 	bodys = bodys[:height]
+
+	//Reset the xls file info
+	var strs = []string{
+		"Connectivity - Frame",
+		"Frame Loads - Distributed",
+		"Frame Props 01 - General",
+		"Frame Section Assignments",
+		"Joint Coordinates",
+	}
+	for _, v := range strs {
+		rows := xls.GetRows(v)
+		for i := 2; i < len(rows); i++ {
+			xls.RemoveRow(v, 3)
+		}
+	}
 
 	//Write Joint
 	// xls.SetActiveSheet(xls.GetSheetIndex("Joint Coordinates"))
@@ -100,8 +115,8 @@ func main() {
 		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("F", index), "RelDist")
 		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("G", index), 0)
 		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("H", index), 1)
-		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("K", index), floatTofloat(v.wind()*v.d/1000.0, 3))
-		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("L", index), floatTofloat(v.wind()*v.d/1000.0, 3))
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("K", index), floatTofloat(v.wind(), 3))
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("L", index), floatTofloat(v.wind(), 3))
 	}
 
 	xls.Save()

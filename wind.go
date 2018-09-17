@@ -64,5 +64,5 @@ func (s *body) wind() float64 {
 		return 1.2 + (tmp-0.002)*0.6/0.013
 	}()
 	beta := 2.0 //风振系数
-	return 0.9 * s.uz() * beta * us * windInfo.w0
+	return 0.9 * s.uz() * beta * us * windInfo.w0 * s.d / 1000.0
 }

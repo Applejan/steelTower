@@ -18,9 +18,7 @@ type body struct {
 	id     int
 	p1, p2 po
 	section
-	windForce float64
 	force     float64
-	// height    int
 }
 
 type force struct {
