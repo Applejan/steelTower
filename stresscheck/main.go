@@ -1,4 +1,11 @@
 package main
+//force like it called
+type force struct {
+	id string
+	m  float64
+	v  float64
+	n  float64
+}
 
 func main() {
 	frame := new(body)
