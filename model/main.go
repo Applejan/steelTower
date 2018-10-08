@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/applejan/steelTower/sections"
 	"log"
 	"os"
 	"strconv"
@@ -13,10 +14,10 @@ import (
 func main() {
 	var height int
 	var grade string
-	bodys := make([]body, 50)
-	points := make([]po, 50)
+	bodys := make([]sections.Body, 50)
+	points := make([]sections.Po, 50)
 	dir, _ := os.Getwd()
-	oldDir := dir + "\\Model.xlsx"
+	oldDir := dir + "\\Model_Input.xlsx"
 	newDir := dir + "\\Model_modify.xlsx"
 	//Init points and bodys
 	xls, err := excelize.OpenFile(oldDir)
@@ -41,26 +42,30 @@ func main() {
 		case "Id":
 			k++
 			for j := 0; j < height; j++ {
-				bodys[j].section.d, _ = strconv.ParseFloat(rows[k][1], 64)
-				bodys[j].section.thick, _ = strconv.ParseFloat(rows[k][2], 64)
+				bodys[j].D, _ = strconv.ParseFloat(rows[k][1], 64)
+				bodys[j].Thick, _ = strconv.ParseFloat(rows[k][2], 64)
 				k++
 			}
 		}
 	}
 	for i := 0; i < height+1; i++ {
-		points[i].id = i + 1
-		points[i].z = i
+		points[i].ID = i + 1
+		points[i].Z = i
 	}
 	for i := 0; i < height; i++ {
-		bodys[i].id = i + 1
-		bodys[i].p1 = points[i]
-		bodys[i].p2 = points[i+1]
-		bodys[i].grade = grade
+		bodys[i].ID = i + 1
+		bodys[i].P1 = points[i]
+		bodys[i].P2 = points[i+1]
+		bodys[i].Grade = grade
 
 	}
 	points = points[:height+1]
 	bodys = bodys[:height]
 
+	xls, err = excelize.OpenFile(newDir)
+	if err != nil {
+		log.Fatalln(err)
+	}
 	//Reset the xls file info
 	var strs = []string{
 		"Connectivity - Frame",
@@ -81,13 +86,13 @@ func main() {
 	log.Println("Now write Joint infomation")
 	for i, v := range points {
 		index := i + 4
-		xls.SetCellValue("Joint Coordinates", fmt.Sprint("A", index), v.id)
-		xls.SetCellValue("Joint Coordinates", fmt.Sprint("H", index), v.x)
-		xls.SetCellValue("Joint Coordinates", fmt.Sprint("E", index), v.y)
-		xls.SetCellValue("Joint Coordinates", fmt.Sprint("I", index), v.y)
-		xls.SetCellValue("Joint Coordinates", fmt.Sprint("D", index), v.x)
-		xls.SetCellValue("Joint Coordinates", fmt.Sprint("F", index), v.z)
-		xls.SetCellValue("Joint Coordinates", fmt.Sprint("J", index), v.z)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("A", index), v.ID)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("H", index), v.X)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("E", index), v.Y)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("I", index), v.Y)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("D", index), v.X)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("F", index), v.Z)
+		xls.SetCellValue("Joint Coordinates", fmt.Sprint("J", index), v.Z)
 		xls.SetCellValue("Joint Coordinates", fmt.Sprint("B", index), "GLOBAL")
 		xls.SetCellValue("Joint Coordinates", fmt.Sprint("C", index), "Cartesian")
 	}
@@ -95,22 +100,22 @@ func main() {
 	log.Println("Now write Frame infomation")
 	for i, v := range bodys {
 		index := i + 4
-		xls.SetCellValue("Connectivity - Frame", fmt.Sprint("A", index), v.id)
-		xls.SetCellValue("Connectivity - Frame", fmt.Sprint("B", index), v.p1.id)
-		xls.SetCellValue("Connectivity - Frame", fmt.Sprint("C", index), v.p2.id)
+		xls.SetCellValue("Connectivity - Frame", fmt.Sprint("A", index), v.ID)
+		xls.SetCellValue("Connectivity - Frame", fmt.Sprint("B", index), v.P1.ID)
+		xls.SetCellValue("Connectivity - Frame", fmt.Sprint("C", index), v.P2.ID)
 
-		secName := fmt.Sprintf("Pipe%.0f*%.0f", v.section.d, v.section.thick)
+		secName := fmt.Sprintf("Pipe%.0f*%.0f", v.D, v.Thick)
 		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("A", index), secName)
-		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("B", index), v.grade)
+		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("B", index), v.Grade)
 		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("C", index), "Pipe")
-		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("D", index), floatTofloat(v.d/1000.0, 3))
-		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("E", index), floatTofloat(v.thick/1000.0, 3))
+		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("D", index), floatTofloat(v.D/1000.0, 3))
+		xls.SetCellValue("Frame Props 01 - General", fmt.Sprint("E", index), floatTofloat(v.Thick/1000.0, 3))
 
-		xls.SetCellValue("Frame Section Assignments", fmt.Sprint("A", index), v.id)
+		xls.SetCellValue("Frame Section Assignments", fmt.Sprint("A", index), v.ID)
 		xls.SetCellValue("Frame Section Assignments", fmt.Sprint("B", index), "Pipe")
 		xls.SetCellValue("Frame Section Assignments", fmt.Sprint("D", index), secName)
 
-		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("A", index), v.id)
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("A", index), v.ID)
 		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("B", index), "WIND")
 		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("C", index), "GLOBAL")
 		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("D", index), "FORCE")
@@ -118,12 +123,11 @@ func main() {
 		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("F", index), "RelDist")
 		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("G", index), 0)
 		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("H", index), 1)
-		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("K", index), floatTofloat(v.wind(), 3))
-		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("L", index), floatTofloat(v.wind(), 3))
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("K", index), floatTofloat(wind(&v), 3))
+		xls.SetCellValue("Frame Loads - Distributed", fmt.Sprint("L", index), floatTofloat(wind(&v), 3))
 	}
 
 	xls.Save()
-	os.Rename(oldDir, newDir)
 
 }
 

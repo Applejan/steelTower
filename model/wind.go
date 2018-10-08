@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/applejan/steelTower/sections"
 	"math"
 )
 
@@ -27,8 +28,8 @@ func (r rough) id() (id int) {
 	}
 }
 
-func (s *body) uz() (uz float64) {
-	z := s.p2.z
+func uz(s *sections.Body) (uz float64) {
+	z := s.P2.Z
 	uzs := [][]float64{
 		{5, 1.17, 1.00, 0.74, 0.62},
 		{10, 1.38, 1.00, 0.74, 0.62},
@@ -53,9 +54,9 @@ func (s *body) uz() (uz float64) {
 	return
 }
 
-func (s *body) wind() float64 {
+func wind(s *sections.Body) float64 {
 	us := func() (us float64) {
-		tmp := s.uz() * windInfo.w0 * math.Pow(s.section.d, 2)
+		tmp := uz(s) * windInfo.w0 * math.Pow(s.D, 2)
 		if tmp <= 0.002 {
 			return 1.2
 		} else if tmp >= 0.15 {
@@ -64,5 +65,5 @@ func (s *body) wind() float64 {
 		return 1.2 + (tmp-0.002)*0.6/0.013
 	}()
 	beta := 2.0 //风振系数
-	return 0.9 * s.uz() * beta * us * windInfo.w0 * s.d / 1000.0
+	return 0.9 * uz(s) * beta * us * windInfo.w0 * s.D / 1000.0
 }
