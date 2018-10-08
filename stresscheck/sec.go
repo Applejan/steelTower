@@ -5,6 +5,21 @@ import (
 	"strings"
 )
 
+//body stand for the Tower frame
+type body struct {
+	id int
+	section
+	force
+}
+
+//force like it called
+type force struct {
+	id string
+	m  float64
+	v  float64
+	n  float64
+}
+
 type section struct {
 	d     float64
 	thick float64

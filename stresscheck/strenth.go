@@ -6,14 +6,6 @@ import (
 	"math"
 )
 
-type sections interface {
-	wn() float64
-	area() float64
-	ix() float64
-	r() float64
-	fy() float64
-}
-
 //GB50017-2017强度验算
 func strenth1(f *force, sec *section) (isok bool) {
 

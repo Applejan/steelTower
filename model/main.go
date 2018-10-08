@@ -4,6 +4,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
@@ -14,9 +15,11 @@ func main() {
 	var grade string
 	bodys := make([]body, 50)
 	points := make([]po, 50)
-
+	dir, _ := os.Getwd()
+	oldDir := dir + "\\Model.xlsx"
+	newDir := dir + "\\Model_modify.xlsx"
 	//Init points and bodys
-	xls, err := excelize.OpenFile("Model.xlsx")
+	xls, err := excelize.OpenFile(oldDir)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -120,6 +123,8 @@ func main() {
 	}
 
 	xls.Save()
+	os.Rename(oldDir, newDir)
+
 }
 
 func floatTofloat(x float64, bit int) (val float64) {
