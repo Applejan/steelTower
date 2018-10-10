@@ -9,9 +9,9 @@ import (
 //GB50017-2017强度验算
 func strenth1(f *force, sec *section) (isok bool) {
 
-	epstion := math.Sqrt(235 / sec.fy())
+	epstion := math.Sqrt(235 / sec.Fy())
 	val := func(sec *section) int {
-		is := sec.d / sec.thick
+		is := sec.D / sec.Thick
 		switch {
 		case is <= 50*math.Pow(epstion, 2):
 			return 0
@@ -35,11 +35,11 @@ func strenth1(f *force, sec *section) (isok bool) {
 		}
 	}(val)
 
-	maxval := f.n/sec.area() + f.m/sec.wn()/gramma
-	minval := f.n/sec.area() - f.m/sec.wn()/gramma
+	maxval := f.n/sec.Area() + f.m/sec.Wn()/gramma
+	minval := f.n/sec.Area() - f.m/sec.Wn()/gramma
 	log.Println("Max strenth is ", maxval)
 	log.Println("Min strenth is ", minval)
-	if maxval > sec.fy() || minval > sec.fy() {
+	if maxval > sec.Fy() || minval > sec.Fy() {
 		return false
 	}
 	return true
@@ -47,7 +47,7 @@ func strenth1(f *force, sec *section) (isok bool) {
 
 //DLT5130-2001弯曲强度计算
 func strenth2(s *section, f *force) (isok bool) {
-	if f.m*s.c()/s.ix() <= fb(s) {
+	if f.m*s.C()/s.Ix() <= fb(s) {
 		return true
 	}
 	return
@@ -55,7 +55,7 @@ func strenth2(s *section, f *force) (isok bool) {
 
 //DLT5130-2001剪切强度计算
 func strenth3(s *section, f *force) (isok bool) {
-	if f.v*qit(s) <= 0.58*s.fy() {
+	if f.v*qit(s) <= 0.58*s.Fy() {
 		return true
 	}
 	return
@@ -63,7 +63,7 @@ func strenth3(s *section, f *force) (isok bool) {
 
 //DLT5130-2001复合受力强度计算
 func strenth4(s *section, f *force) (isok bool) {
-	tmp1 := math.Pow(f.n/s.area()+f.m*s.c()/s.ix(), 2)
+	tmp1 := math.Pow(f.n/s.Area()+f.m*s.C()/s.Ix(), 2)
 	tmp2 := 3 * math.Pow(f.v*qit(s), 2)
 	if tmp1*tmp1+tmp2*tmp2 <= math.Pow(fb(s), 2) {
 		return true
