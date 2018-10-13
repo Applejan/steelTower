@@ -45,8 +45,9 @@ func stablity(s *section, f *force) (isok bool) {
 }
 
 //Stablity implents the check of stablity
-func Stablity(s *section, f *force) {
-	if stablity(s, f) {
+func Stablity(section map[string]section, f *force) {
+	s:=section[f.frameID]
+	if stablity(&s, f) {
 		fmt.Println("DLT5130-2001局部稳定验算,OK!")
 	} else {
 		fmt.Println("DLT5130-2001局部稳定验算,False!")
