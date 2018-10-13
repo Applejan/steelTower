@@ -70,5 +70,6 @@ func main() {
 func checkIt(frame map[string]section, f []force) {
 	for _, ff := range f {
 		Strength(frame, &ff)
+		Stablity(frame, &ff)
 	}
 }
