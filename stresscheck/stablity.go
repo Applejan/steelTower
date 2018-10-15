@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 )
 
 //DLT5130中受压稳定强度设计值
@@ -37,19 +36,15 @@ func fb(s *section) (fc float64) {
 //DLT5130-2001局部稳定验算
 func stablity(s *section, f *force) (isok bool) {
 	v := f.n/s.Area()/fc(s) + f.m*s.C()/s.Ix()/fb(s)
-	log.Println("Local stability val is ", v)
 	if v <= 1 {
 		return true
 	}
+	fmt.Printf("Body%v in %v force is M=%.2f,V=%.2f,N=%.2f(DLT5130)\n", f.frameID, f.forceID, f.m, f.v, f.n)
 	return
 }
 
 //Stablity implents the check of stablity
 func Stablity(section map[string]section, f *force) {
-	s:=section[f.frameID]
-	if stablity(&s, f) {
-		fmt.Println("DLT5130-2001局部稳定验算,OK!")
-	} else {
-		fmt.Println("DLT5130-2001局部稳定验算,False!")
-	}
+	s := section[f.frameID]
+	_ = stablity(&s, f)
 }

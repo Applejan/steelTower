@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/applejan/steelTower/sections"
 	"log"
@@ -23,7 +24,8 @@ type section struct {
 
 func main() {
 	grade := "Q235"
-	fileName := os.Args[1]
+	// fileName := os.Args[1]
+	fileName := `E:\GOLANG\src\github.com\applejan\steelTower\stresscheck\工作簿2.xlsx`
 	xls, err := excelize.OpenFile(fileName)
 	if err != nil {
 		log.Println(err)
@@ -64,6 +66,12 @@ func main() {
 		ff := force{frameID, forceID, m, v, p}
 		forces = append(forces, ff)
 		checkIt(frames, forces)
+		// for _, v := range frames {
+		// 	fmt.Println(v)
+		// }
+		// for _, v := range forces {
+		// 	fmt.Println(v)
+		// }
 	}
 }
 
@@ -72,4 +80,13 @@ func checkIt(frame map[string]section, f []force) {
 		Strength(frame, &ff)
 		Stablity(frame, &ff)
 	}
+}
+
+func outPut(s string) {
+	txt, err := os.Create("OutPut.txt")
+	if err != nil {
+		fmt.Print(err)
+	}
+	txt.WriteString(s)
+	txt.Close()
 }

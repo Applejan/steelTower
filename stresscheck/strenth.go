@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
 )
 
@@ -36,9 +35,8 @@ func strenth1(f *force, sec *section) (isok bool) {
 
 	maxval := f.n/sec.Area() + f.m/sec.Wn()/gramma
 	minval := f.n/sec.Area() - f.m/sec.Wn()/gramma
-	log.Println("Max strenth is ", maxval)
-	log.Println("Min strenth is ", minval)
 	if maxval > sec.Fy() || minval > sec.Fy() {
+		fmt.Printf("Body%v in %v force is M=%.2f,V=%.2f,N=%.2f(GB50017)\n", f.frameID, f.forceID, f.m, f.v, f.n)
 		return false
 	}
 	return true
@@ -49,6 +47,7 @@ func strenth2(s *section, f *force) (isok bool) {
 	if f.m*s.C()/s.Ix() <= fb(s) {
 		return true
 	}
+	fmt.Printf("Body%v in %v force is M=%.2f,V=%.2f,N=%.2f(DLT5130),Want %v \n", f.frameID, f.forceID, f.m, f.v, f.n, fb(s))
 	return
 }
 
@@ -57,7 +56,9 @@ func strenth3(s *section, f *force) (isok bool) {
 	if f.v*qit(s) <= 0.58*s.Fy() {
 		return true
 	}
+	fmt.Printf("Body%v in %v force is M=%.2f,V=%.2f,N=%.2f(DLT5130),Want %v \n", f.frameID, f.forceID, f.m, f.v, f.n, 0.58*s.Fy())
 	return
+
 }
 
 //DLT5130-2001复合受力强度计算
@@ -67,30 +68,15 @@ func strenth4(s *section, f *force) (isok bool) {
 	if tmp1*tmp1+tmp2*tmp2 <= math.Pow(fb(s), 2) {
 		return true
 	}
+	fmt.Printf("Body%v in %v force is M=%.2f,V=%.2f,N=%.2f(DLT5130)\n", f.frameID, f.forceID, f.m, f.v, f.n)
 	return
 }
 
 // Strength implments the check of strength
 func Strength(sections map[string]section, f *force) {
 	s := sections[f.frameID]
-	if strenth4(&s, f) {
-		fmt.Println("GB50017-2017强度验算,OK!")
-	} else {
-		fmt.Println("GB50017-2017强度验算,False!")
-	}
-	if strenth2(&s, f) {
-		fmt.Println("DLT5130-2001弯曲强度计算,OK!")
-	} else {
-		fmt.Println("DLT5130-2001弯曲强度计算,False!")
-	}
-	if strenth3(&s, f) {
-		fmt.Println("DLT5130-2001剪切强度计算,OK!")
-	} else {
-		fmt.Println("DLT5130-2001剪切强度计算,False!")
-	}
-	if strenth4(&s, f) {
-		fmt.Println("DLT5130-2001剪切强度计算,OK!")
-	} else {
-		fmt.Println("DLT5130-2001剪切强度计算,False!")
-	}
+	_ = strenth4(&s, f)
+	_ = strenth2(&s, f)
+	_ = strenth3(&s, f)
+	_ = strenth4(&s, f)
 }
