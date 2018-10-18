@@ -33,7 +33,7 @@ func main() {
 	rows := xls.GetRows("Frame Section Assignments")
 	//init the frame
 	frames := make(map[string]section)
-	forces := make([]force, len(rows)-3)
+	forces := make([]force, 0, len(rows)-3)
 	for i, v := range rows {
 		if i < 3 {
 			continue
@@ -51,27 +51,21 @@ func main() {
 	}
 
 	rows = xls.GetRows("Element Forces - Frames")
-	for index, val := range rows {
-		if index < 3 {
-			continue
+	for _, val := range rows {
+		if val[4] == "Combination" {
+			frameID := val[0]
+			forceID := val[2]
+			m, _ := strconv.ParseFloat(val[11], 64)
+			v, _ := strconv.ParseFloat(val[7], 64)
+			p, _ := strconv.ParseFloat(val[6], 64)
+			ff := force{frameID, forceID, m, v, p}
+			forces = append(forces, ff)
 		}
-		if val[4] == "Mode" {
-			continue
-		}
-		frameID := val[0]
-		forceID := val[2]
-		m, _ := strconv.ParseFloat(val[11], 64)
-		v, _ := strconv.ParseFloat(val[7], 64)
-		p, _ := strconv.ParseFloat(val[6], 64)
-		ff := force{frameID, forceID, m, v, p}
-		forces = append(forces, ff)
-		checkIt(frames, forces)
-		// for _, v := range frames {
-		// 	fmt.Println(v)
-		// }
-		// for _, v := range forces {
-		// 	fmt.Println(v)
-		// }
+	}
+
+	for _, v := range forces {
+		percent, err := Stablity(frames, &v)
+		fmt.Print(percent, "\t", err, "\n")
 	}
 }
 
