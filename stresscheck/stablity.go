@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math"
 )
 
 //DLT5130中受压稳定强度设计值
@@ -35,18 +36,18 @@ func fb(s *section) (fc float64) {
 }
 
 //DLT5130-2001局部稳定验算
-func stablity(s *section, f *force) (percent float64, err error) {
-	v := -f.n/s.Area()/fc(s) + f.m*s.C()/s.Ix()/fb(s)
+func stablity(s *section, f *force) (string, error) {
+	v := math.Abs(f.n*1000/s.Area()/fc(s)) + math.Abs(f.m*1e6*s.C()/s.Ix()/fb(s))
 	if v <= 1 {
-		return v, err
+		return fmt.Sprintf("%.2f", v), nil
 	}
-	str := fmt.Sprintf("Body%v in %v force is M=%.2f,V=%.2f,N=%.2f(DLT5130)\n", f.frameID, f.forceID, f.m, f.v, f.n)
-	return v, errors.New(str)
+	return fmt.Sprintf("%.2f", v), errors.New("DLT5130-2001局部稳定超限\t")
 }
 
 //Stablity implents the check of stablity
-func Stablity(section map[string]section, f *force) (float64, error) {
+func Stablity(section map[string]section, f *force) {
 	s := section[f.frameID]
-	str, err := stablity(&s, f)
-	return str, err
+	if pre, err := strenth3(&s, f); err != nil {
+		fmt.Print(err, "应力系数：", pre, "\n")
+	}
 }
